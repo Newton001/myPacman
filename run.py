@@ -17,9 +17,8 @@ class GameController(object):
 
     def startGame(self):
         self.setBackground()
-        self.nodes = NodeGroup()
-        self.nodes.setupTestNodes()
-        self.pacman = Pacman(self.nodes.nodeList[0])
+        self.nodes = NodeGroup("mazetest.txt")
+        self.pacman = Pacman(self.nodes.getStartTempNode())
 
     def update(self):
         dt = self.clock.tick(30)/1000
@@ -37,6 +36,8 @@ class GameController(object):
         self.nodes.render(self.screen)
         self.pacman.render(self.screen)
         pygame.display.update()
+
+
 
 
 if __name__ == "__main__":
