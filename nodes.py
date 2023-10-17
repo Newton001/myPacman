@@ -22,11 +22,12 @@ class NodeGroup(object):
         self.level = level
         self.nodeLUT = {}
         self.nodeSymbols = ['+','P','n']
-        self.pathSymbols = ['.','-','/','p']
+        self.pathSymbols = ['.','-','|','p']
         data = self.readMazeFile(level)
         self.createNodeTable(data)
         self.connectHorizontally(data)
         self.connectVertically(data)
+        self.homekey = None
 
     def readMazeFile(self,textfile):
         return np.loadtxt(textfile,dtype='<U1')
@@ -99,4 +100,22 @@ class NodeGroup(object):
     def render(self,screen):
         for node in self.nodeLUT.values():
             node.render(screen)
+
+    def creatHomeNodes(self,xoffset,yoffset):
+        homedata = np.array([['X','X','+','X','X'],
+                             ['X','X','.','X','X'],
+                             ['+','X','.','X','+'],
+                             ['+','.','+','.','+'],
+                             ['+','X','X','X','+']])
+
+        self.createNodeTable(homedata,xoffset,yoffset)
+        self.connectHorizontally(homedata,xoffset,yoffset)
+        self.homekey = self.constructKey(xoffset+2,yoffset)
+        return self.homekey
+
+    def connectHomeNodes(self,homekey,otherkey,direction):
+        key = self.constructKey(*otherkey)
+        self.nodeLUT[homekey].neighbors[direction] = self.nodeLUT[key]
+        self.nodeLUT[key].neighbors[direction*-1] = self.nodeLUT[homekey]
+
 

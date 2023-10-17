@@ -4,6 +4,7 @@ from constants import *
 from pacman import *
 from nodes import *
 from pellets import PelletGroup
+from monsters import Monster
 
 class GameController(object):
     def __init__(self):
@@ -20,12 +21,17 @@ class GameController(object):
         self.setBackground()
         self.nodes = NodeGroup("maze2.txt")
         self.nodes.setPortalPair((0,17),(27,17))
+        homekey = self.nodes.creatHomeNodes(11.5,14)
+        self.nodes.connectHomeNodes(homekey,(12,14),LEFT)
+        self.nodes.connectHomeNodes(homekey,(15,14),RIGHT)
         self.pacman = Pacman(self.nodes.getStartTempNode())
         self.pellets = PelletGroup("maze2.txt")
+        self.monster = Monster(self.nodes.getStartTempNode(),self.pacman)
 
     def update(self):
         dt = self.clock.tick(30)/1000
         self.pacman.update(dt)
+        self.monster.update(dt)
         self.pellets.update(dt)
         self.checkPelletEvents()
         self.checkEvents()
@@ -41,6 +47,7 @@ class GameController(object):
         self.nodes.render(self.screen)
         self.pellets.render(self.screen)
         self.pacman.render(self.screen)
+        self.monster.render(self.screen)
         pygame.display.update()
 
     def checkPelletEvents(self):

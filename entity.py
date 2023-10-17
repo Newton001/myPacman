@@ -7,6 +7,7 @@ from random import randint
 class Entity(object):
     def __init__(self,node):
         self.name = None
+        self.goal = None
         self.directions = {UP:Vector2(0,-1), DOWN:Vector2(0,1),
                            LEFT:Vector2(-1,0), RIGHT:Vector2(1,0),STOP:Vector2()}
         self.direction = STOP
@@ -19,6 +20,8 @@ class Entity(object):
         self.target = node
         self.visible = True
         self.disablePortal = False
+        self.directionMethod = self.randomDirection
+
 
     def setPosition(self):
         self.position = self.node.position.copy()
@@ -64,12 +67,12 @@ class Entity(object):
             pygame.draw.circle(screen,self.color, p, self.radius)
 
     def update(self,dt):
-        self.position += self.directions[self.direction] (self.speed * dt)
+        self.position += self.directions[self.direction]*self.speed*dt
 
         if self.overShotTarget():
             self.node = self.target
             directions = self.validDirections()
-            direction = self.randomDirection(directions)
+            direction = self.directionMethod(directions)
             if not self.disablePortal:
                 if self.node.neighbors[PORTAL] is not None:
                     self.node = self.node.neighbors[PORTAL]
@@ -99,5 +102,14 @@ class Entity(object):
 
     def randomDirection(self,directions):
         return directions[randint(0,len(directions)-1)]
+
+    def goalDirection(self,directions):
+        distances = []
+        for direction in directions:
+            vec = self.node.position + self.directions[direction] *TILEWIDTH -self.goal
+            distances.append(vec.magnitudeSquared())
+        index = distances.index(min(distances))
+        return directions[index]
+
 
 
