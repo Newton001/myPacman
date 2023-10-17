@@ -27,6 +27,7 @@ class GameController(object):
         self.pacman = Pacman(self.nodes.getStartTempNode())
         self.pellets = PelletGroup("maze2.txt")
         self.monster = Monster(self.nodes.getStartTempNode(),self.pacman)
+        self.monster.setSpawnNode(self.nodes.getNodeFromTiles(2+11.5,3+14))
 
     def update(self):
         dt = self.clock.tick(30)/1000
@@ -34,8 +35,15 @@ class GameController(object):
         self.monster.update(dt)
         self.pellets.update(dt)
         self.checkPelletEvents()
+        self.checkMonsterEvents()
         self.checkEvents()
         self.render()
+
+    def checkMonsterEvents(self):
+        if self.pacman.collideMonster(self.monster):
+            if self.monster.mode.current is FREIGHT:
+                self.monster.startSpawn()
+
 
     def checkEvents(self):
         for event in pygame.event.get():
@@ -55,6 +63,8 @@ class GameController(object):
         if pellet:
             self.pellets.numEaten +=1
             self.pellets.pelletList.remove(pellet)
+            if pellet.name ==POWERPELLET:
+                self.monster.startFreight()
 
 
 

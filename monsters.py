@@ -31,4 +31,28 @@ class Monster(Entity):
     def chase(self):
         self.goal = self.pacman.position
 
+    def spawn(self):
+        self.goal = self.spawnNode.position
+
+    def setSpawnNode(self,node):
+        self.spawnNode = node
+
+    def startSpawn(self):
+        self.mode.setSpawnNode()
+        if self.mode.current == SPAWN:
+            self.setSpeed(150)
+            self.directionMethod = self.goalDirection
+            self.spawn()
+
+    def startFreight(self):
+        self.mode.setFreightMode()
+        if self.mode.current == FREIGHT:
+            self.setSpeed(50)
+            self.directionMethod = self.randomDirection
+
+    def normalMode(self):
+        self.setSpeed(100)
+        self.directionMethod = self.goalDirection
+
+
 
