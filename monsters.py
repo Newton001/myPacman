@@ -55,6 +55,8 @@ class Monster(Entity):
     def normalMode(self):
         self.setSpeed(100)
         self.directionMethod = self.goalDirection
+        self.homeNode.denyAccess(DOWN, self)
+
 
 class Blinky(Monster):
     def __init__(self,node,pacman=None,blinky=None):
@@ -153,3 +155,5 @@ class MonsterGroup(object):
     def render(self,screen):
         for monster in self:
             monster.render(screen)
+
+
